@@ -1,4 +1,4 @@
-package dataAccess;
+package removeBetUtility;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -26,20 +26,20 @@ import exceptions.QuestionAlreadyExist;
 /**
  * Implements the Data Access utility to the objectDb database
  */
-public class DataAccess  {
+public class TestUtilityDataAccess{
 
 	protected EntityManager db;
 	protected EntityManagerFactory emf;
 
 	ConfigXML config = ConfigXML.getInstance();
 
-	public DataAccess(boolean initializeMode)  {
+	public TestUtilityDataAccess (boolean initializeMode)  {
 		System.out.println("Creating DataAccess instance => isDatabaseLocal: " + 
 				config.isDataAccessLocal() + " getDatabBaseOpenMode: " + config.getDataBaseOpenMode());
 		open(initializeMode);
 	}
 
-	public DataAccess()  {	
+	public TestUtilityDataAccess()  {	
 		this(false);
 	}
 
@@ -65,7 +65,7 @@ public class DataAccess  {
 			int year = today.get(Calendar.YEAR);
 			if (month == 12) { month = 0; year += 1;}  
 
-			Event ev1 = new Event(1, "Atlético-Athletic", UtilDate.newDate(year, month, 25));
+			Event ev1 = new Event(1, "Atlético-Athletic", UtilDate.newDate(2021, 10, 25));
 			Event ev2 = new Event(2, "Eibar-Barcelona", UtilDate.newDate(year, month, 17));
 			Event ev3 = new Event(3, "Getafe-Celta", UtilDate.newDate(year, month, 17));
 			Event ev4 = new Event(4, "Alavés-Deportivo", UtilDate.newDate(year, month, 17));
@@ -261,27 +261,32 @@ public class DataAccess  {
 	
 	public boolean removeBet(User user, Bet bet) throws NullPointerException{
 		
+		boolean ret = false;
+		
 		if(user == null || bet == null) {
 			throw new NullPointerException();
 		}
 		
 		User userToChange = this.getUserWithUsernamePassword(user.getUsername(), user.getPassword());
 		List<Bet> betlist = userToChange.getBets();
-		Bet userBet = null;
+		if (betlist != null) {
+			Bet userBet = null;
 		
-		for (Bet b : betlist)
-			if (bet.getQuestion().getQuestionNumber().equals(b.getQuestion().getQuestionNumber()))
-				userBet = b;
-		
-		Question q = this.getQuestion(userBet.getQuestion());
-		db.getTransaction().begin();
-		boolean ret = userToChange.removeBet(userBet);
-		if(ret)
-		{
-			q.addPool(userBet.getPlacedBet() * -1);
-			userToChange.increaseCurrency(userBet.getPlacedBet() * 0.75);
+			for (Bet b : betlist)
+				if (bet.getQuestion().getQuestionNumber().equals(b.getQuestion().getQuestionNumber()))
+					userBet = b;
+			if(userBet != null) {
+				Question q = this.getQuestion(userBet.getQuestion());
+				db.getTransaction().begin();
+				ret = userToChange.removeBet(userBet);
+				if(ret)
+				{
+					q.addPool(userBet.getPlacedBet() * -1);
+					userToChange.increaseCurrency(userBet.getPlacedBet() * 0.75);
+				}
+				db.getTransaction().commit();
+			}
 		}
-		db.getTransaction().commit();
 		return ret;
 	}
 	
@@ -425,5 +430,76 @@ public class DataAccess  {
 				}
 			}
 		}
+	}
+	
+	public boolean removeUser(User user) {
+		boolean ret = false;
+		if(user != null) {
+			try {
+				this.getUserByID(user.getId());
+				db.getTransaction().begin();
+				db.remove(user);
+				db.getTransaction().commit();
+				ret = true;
+			}
+			catch(Exception e) {
+			}
+		}
+		return ret;
+	}
+	
+	public Event getEventWithID(int evN) {
+		System.out.println(">> DataAccess: getEvents");
+		Event ret = new Event();	
+		TypedQuery<Event> query = db.createQuery("SELECT ev FROM Event ev WHERE ev.eventNumber=?1", 
+				Event.class);   
+		query.setParameter(1, evN);
+		ret = query.getSingleResult();
+		return ret;
+	}
+	
+	public boolean removeQuestion(Question question) {
+		Boolean ret = true;
+		try {
+			Question qToRemove = this.getQuestion(question);
+			db.getTransaction().begin();
+			db.remove(qToRemove);
+			db.getTransaction().commit();
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+			ret = false;
+		}
+		return ret;
+	}
+	
+	public boolean removeEvent(int evN) {
+		Boolean ret = true;
+		try {
+			Event ev = this.getEventWithID(evN);
+			db.getTransaction().begin();
+			db.remove(ev);
+			db.getTransaction().commit();
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+			ret = false;
+		}
+		return ret;
+	}
+	
+	public boolean createEvent(int evN, Date date) {
+		// Event ev1 = new Event(1, "Atlético-Athletic", UtilDate.newDate(2021, 10, 25));
+		boolean ret = true;
+		try {
+			Event ev = new Event(evN, "", date);
+			db.getTransaction().begin();
+			db.persist(ev);
+			db.getTransaction().commit();
+		}
+		catch(Exception e) {
+			ret = false;
+		}
+		return ret;
 	}
 }

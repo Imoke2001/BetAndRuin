@@ -118,17 +118,9 @@ class CreateQuestionDATest {
 			Float betMinimum = 2f;
 			String queryText = "Query Text";
 			QuestionTypes type = QuestionTypes.FREE;
-			try {
-				// invoke System Under Test (sut)
-				Question q= sut.createQuestion(null, queryText, betMinimum, type);
-
-				// verify the results returned
-				assertNull(q);
-
-			} catch (QuestionAlreadyExist e) {
-				// if the program goes to this point fail
-				fail("The event is null. Impossible to search for a question in it");
-			} 
+			
+			// invoke System Under Test (sut)
+			assertThrows(NullPointerException.class, () -> sut.createQuestion(null, queryText, betMinimum, type));
 	}
 	
 	@Test
@@ -148,29 +140,13 @@ class CreateQuestionDATest {
 			testDA.close();
 
 			String queryText = null;
-			try {
-				// invoke System Under Test (sut)
-				Question q= sut.createQuestion(ev, queryText, betMinimum, type);
-
-				// verify the results returned
-				assertNull(q);
-				
-				// verify DB
-				Vector<Event> es = testDA.getEvents(oneDate);
-				testDA.close();
-
-				assertTrue(es.contains(ev));
-
-			} catch (QuestionAlreadyExist e) {
-				// if the program goes to this point fail
-				fail("No, the question is null");
-			} finally {
-				// Remove the created objects in the database (cascade removing)
-				testDA.open();
-				boolean b = testDA.removeEvent(ev);
-				System.out.println("Finally " + b);
-				testDA.close();
-			}
+			// invoke System Under Test (sut)
+			assertThrows(NullPointerException.class, () -> sut.createQuestion(ev, queryText, betMinimum, type));
+			// Remove the created objects in the database (cascade removing)
+			testDA.open();
+			boolean b = testDA.removeEvent(ev);
+			System.out.println("Finally " + b);
+			testDA.close();
 		} catch (ParseException e) {
 			fail("It should be correct: check the date format");
 		}
