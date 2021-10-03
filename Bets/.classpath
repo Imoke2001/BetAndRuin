@@ -32,5 +32,6 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/5"/>
 	<classpathentry kind="lib" path="C:/Users/Barbara/Documents/GitHub/BetAndRuin/Bets/src/main/resources/jcalendar-1.4.jar"/>
 	<classpathentry kind="lib" path="C:/Users/Barbara/Documents/GitHub/BetAndRuin/Bets/src/main/resources/objectdb.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Barbara/Downloads/openlogic-openjdk-8u262-b10-windows-x64.zip"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

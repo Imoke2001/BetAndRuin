@@ -277,6 +277,7 @@ public class TestUtilityDataAccess{
 					userBet = b;
 			
 			if(userBet != null) {
+				System.out.println("a");
 				Question q = this.getQuestion(userBet.getQuestion());
 				db.getTransaction().begin();
 				userToChange.removeBet(userBet);

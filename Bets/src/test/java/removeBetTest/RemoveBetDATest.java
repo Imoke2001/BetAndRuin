@@ -14,7 +14,7 @@ import enums.QuestionTypes;
 import exceptions.QuestionAlreadyExist;
 import removeBetUtility.TestUtilityDataAccess;
 
-class RemoveBetTest {
+class RemoveBetDATest {
 	
 	TestUtilityDataAccess DA = new TestUtilityDataAccess();
 	

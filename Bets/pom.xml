@@ -51,9 +51,11 @@
 	<properties>
   		<maven.compiler.target>1.8</maven.compiler.target>
 		<maven.compiler.source>1.8</maven.compiler.source>
+		<fork>true</fork>
+		<executable>C:\Program Files\Java\openlogic-openjdk-8u262-b10-win-64\bin\javac</executable>
 		<sonar.organization>neworganizationfor</sonar.organization>
 		<sonar.host.url>https://sonarcloud.io</sonar.host.url>
-		<sonar.login></sonar.login>
+		<sonar.login>069ffc61e13215aa964fcab9ce0f272e3cdaecdf</sonar.login>
 	</properties>
 	
 	<!-- https://mvnrepository.com/artifact/junit/junit -->
