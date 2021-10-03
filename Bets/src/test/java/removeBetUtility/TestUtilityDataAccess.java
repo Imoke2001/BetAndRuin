@@ -269,22 +269,21 @@ public class TestUtilityDataAccess{
 		
 		User userToChange = this.getUserWithUsernamePassword(user.getUsername(), user.getPassword());
 		List<Bet> betlist = userToChange.getBets();
-		if (betlist != null) {
+		if (!betlist.isEmpty()) {
 			Bet userBet = null;
 		
 			for (Bet b : betlist)
 				if (bet.getQuestion().getQuestionNumber().equals(b.getQuestion().getQuestionNumber()))
 					userBet = b;
+			
 			if(userBet != null) {
 				Question q = this.getQuestion(userBet.getQuestion());
 				db.getTransaction().begin();
-				ret = userToChange.removeBet(userBet);
-				if(ret)
-				{
-					q.addPool(userBet.getPlacedBet() * -1);
-					userToChange.increaseCurrency(userBet.getPlacedBet() * 0.75);
-				}
+				userToChange.removeBet(userBet);
+				q.addPool(userBet.getPlacedBet() * -1);
+				userToChange.increaseCurrency(userBet.getPlacedBet() * 0.75);
 				db.getTransaction().commit();
+				ret = true;
 			}
 		}
 		return ret;

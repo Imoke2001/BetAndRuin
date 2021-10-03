@@ -1,1 +1,7 @@
+/businessLogic/
+/configuration/
 /dataAccess/
+/domain/
+/enums/
+/exceptions/
+/gui/
